@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM Machine Learning — Révision</title>
+<style>
+  :root{
+    --bg:#0f1420; --card:#1a2130; --card2:#232c3d; --line:#2e3a50;
+    --txt:#e7ecf3; --muted:#9aa7bd; --accent:#5b8def; --accent2:#3a6fd0;
+    --ok:#2ecc71; --okbg:#173a2a; --bad:#e74c3c; --badbg:#3a1a1a; --warn:#f1c40f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+       background:var(--bg);color:var(--txt);line-height:1.55}
+  header{background:linear-gradient(135deg,#1c2740,#141a29);padding:22px 20px;border-bottom:1px solid var(--line)}
+  header h1{margin:0;font-size:20px}
+  header p{margin:6px 0 0;color:var(--muted);font-size:13px}
+  .wrap{max-width:900px;margin:0 auto;padding:20px}
+  .pick{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+  .pick button{flex:1;min-width:240px;background:var(--card);border:1px solid var(--line);
+       color:var(--txt);padding:20px;border-radius:12px;cursor:pointer;text-align:left;transition:.15s}
+  .pick button:hover{border-color:var(--accent);background:var(--card2)}
+  .pick button b{font-size:16px}
+  .pick button span{display:block;color:var(--muted);font-size:13px;margin-top:6px}
+  .hidden{display:none}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .topbar .title{font-weight:600}
+  .btn{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:8px 14px;
+       border-radius:8px;cursor:pointer;font-size:14px}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:var(--accent2);border-color:var(--accent)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .palette{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+  .palette button{width:34px;height:34px;border-radius:7px;border:1px solid var(--line);
+       background:var(--card);color:var(--muted);cursor:pointer;font-size:12px}
+  .palette button.cur{border-color:var(--accent);color:#fff}
+  .palette button.done{background:var(--okbg);color:#8fe6b4;border-color:#2b6b48}
+  .palette button.wrong{background:var(--badbg);color:#f3a49b;border-color:#7a3a34}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .qmeta{color:var(--muted);font-size:12px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+  .qtext{font-size:16px;font-weight:500;margin-bottom:6px;white-space:pre-wrap}
+  .hint{font-size:12px;color:var(--warn);margin-bottom:14px}
+  .opts{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+  label.opt{display:flex;gap:11px;align-items:flex-start;background:var(--card2);border:1px solid var(--line);
+       border-radius:10px;padding:12px 14px;cursor:pointer;transition:.12s}
+  label.opt:hover{border-color:var(--accent)}
+  label.opt input{margin-top:3px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+  label.opt.correct{border-color:var(--ok);background:var(--okbg)}
+  label.opt.incorrect{border-color:var(--bad);background:var(--badbg)}
+  .tag{font-size:11px;font-weight:700;margin-left:auto;padding:2px 8px;border-radius:20px;white-space:nowrap}
+  .tag.ok{background:var(--ok);color:#04220f}
+  .tag.bad{background:var(--bad);color:#2a0a06}
+  .actions{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+  .result{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:14px;display:none}
+  .result.show{display:block}
+  .result.good{background:var(--okbg);border:1px solid #2b6b48}
+  .result.no{background:var(--badbg);border:1px solid #7a3a34}
+  .result b{display:block;margin-bottom:6px}
+  .exp{color:var(--txt);font-size:14px;margin-top:4px}
+  .exp .flag{color:var(--warn)}
+  .nav{display:flex;justify-content:space-between;margin-top:18px;gap:10px}
+  .progress{color:var(--muted);font-size:13px;margin-bottom:10px}
+  code{background:#0c1018;padding:1px 5px;border-radius:4px;font-size:13px}
+  footer{color:var(--muted);font-size:12px;text-align:center;padding:20px}
+</style>
+</head>
+<body>
+<header>
+  <h1>QCM Machine Learning — Mode révision</h1>
+  <p>IT3190E / IT3191E · Exam2022-2 · Réponses reconstituées et corrigées (les PDF sources n'étaient pas corrigés).</p>
+</header>
+
+<div class="wrap">
+  <!-- SELECTION -->
+  <div id="menu">
+    <div class="pick">
+      <button onclick="startQuiz(0)">
+        <b>QCM 1 — IT3191E</b>
+        <span id="c0">Final Exam (04/08/2023)</span>
+      </button>
+      <button onclick="startQuiz(1)">
+        <b>QCM 2 — IT3190E</b>
+        <span id="c1">Kíp 2 (02/08/2023)</span>
+      </button>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin-top:18px">
+      Coche ta/tes réponse(s) puis clique sur <b>Vérifier</b>. La correction et l'explication apparaissent.
+      Les questions à cases carrées (☐) acceptent plusieurs réponses ; les rondes (◯) une seule.
+    </p>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="hidden">
+    <div class="topbar">
+      <span class="title" id="quizTitle"></span>
+      <div>
+        <button class="btn" onclick="backToMenu()">← Menu</button>
+      </div>
+    </div>
+    <div class="progress" id="progress"></div>
+    <div class="palette" id="palette"></div>
+    <div class="card" id="card"></div>
+    <div class="nav">
+      <button class="btn" id="prev" onclick="go(-1)">← Précédent</button>
+      <button class="btn primary" id="next" onclick="go(1)">Suivant →</button>
+    </div>
+  </div>
+</div>
+
+<footer>Site de révision local · réponses vérifiées (calculs numériques inclus). Certaines questions tronquées dans le PDF sont signalées par ⚠.</footer>
+
+<script>
+/* ============ DONNÉES ============ */
+/* type: 's' = une réponse, 'm' = plusieurs ; correct = indices ; note = avertissement éventuel */
+const QUIZZES = [
+{
+ title:"QCM 1 — IT3191E (Final Exam, 04/08/2023)",
+ questions:[
+ {id:"6fef7a",type:"s",q:"Choose the most appropriate statement about overfitting",
+  o:["A function is said to overfit relative to another one if it is less accurate in fitting known data, but more accurate in predicting unseen data",
+     "A function is said to overfit relative to another one if it is less accurate in both fitting known data and predicting unseen data",
+     "A function is said to overfit relative to another one if it is more accurate in fitting known data, but less accurate in predicting unseen data",
+     "All the above mentioned statements are wrong"],
+  c:[2],e:"Le surapprentissage = coller trop aux données connues (meilleure précision sur le train) mais mauvaise généralisation sur les données non vues."},
+
+ {id:"2fbde8",type:"s",q:"Where is the difference between supervised learning and unsupervised learning?",
+  o:["From the way we train a model, supervised learning means that we have to provide detailed steps for a machine to learn",
+     "From the training data for which supervised learning often requires labels/responses for the training phase",
+     "From the aim of the algorithm, unsupervised learning often does not do prediction",
+     "From the type of the output which is often a real number in supervised learning"],
+  c:[1],e:"La distinction fondamentale : l'apprentissage supervisé utilise des données étiquetées (labels/réponses), le non-supervisé non."},
+
+ {id:"0c26ac",type:"s",q:"Choose the most appropriate statement about underfitting",
+  o:["A learning algorithm is said to underfit relative to another one if it is less accurate in fitting known data, but more accurate in predicting unseen data",
+     "A learning algorithm is said to underfit relative to another one if it is less accurate in both fitting known data and predicting unseen data",
+     "A learning algorithm is said to underfit relative to another one if it is more accurate in fitting known data, but less accurate in predicting unseen data",
+     "All the above mentioned statements are wrong"],
+  c:[1],e:"Le sous-apprentissage = modèle trop simple : mauvais partout, sur le train ET sur les données non vues.",
+  note:"Options reconstruites (partiellement masquées dans le PDF) par symétrie avec la question sur l'overfitting."},
+
+ {id:"949251",type:"s",q:"Knowledge discovery is …",
+  o:["the process of creating knowledge from a dataset",
+     "the process of grouping objects in such a way that objects in the same group are more similar than those in the other groups",
+     "the process of converting data from one format (or structure) into a different type of format (or structure)",
+     "the process of finding in a dataset those data points that do not have values for the input variables"],
+  c:[0],e:"« Knowledge discovery » (KDD) = extraire/créer de la connaissance à partir de données. L'option 2 décrit le clustering, la 3 la transformation, la 4 les valeurs manquantes."},
+
+ {id:"b1b2bc",type:"m",q:"Which of the following is a solution to cleaning noise data?",
+  o:["Binning","Outlier detection","Normalization","Aggregation"],
+  c:[0,1],e:"Nettoyer le bruit : le binning (lissage par regroupement) et la détection d'aberrants (outliers) traitent les valeurs bruitées. Normalisation et agrégation sont de la transformation/réduction, pas du nettoyage de bruit."},
+
+ {id:"c96b71",type:"s",q:"Data discretization is",
+  o:["to convert discrete attributes to continuous ones","to find outliers",
+     "to convert continuous attributes to discrete ones","to scale up data"],
+  c:[2],e:"La discrétisation transforme des attributs continus en attributs discrets (intervalles/catégories)."},
+
+ {id:"dpre",type:"s",q:"Data preprocessing may refer to",
+  o:["deciding the data format and collecting data then",
+     "process of transforming a raw dataset into a suitable form for analysis",
+     "analyzing some main properties of the dataset"],
+  c:[1],e:"Le prétraitement = transformer des données brutes en une forme adaptée à l'analyse (nettoyage, normalisation, discrétisation…)."},
+
+ {id:"5255e8",type:"s",q:'What does "mode" mean?',
+  o:["Variation","Repeats the most","Middle","Average"],
+  c:[1],e:"Le mode = la valeur qui apparaît le plus souvent. (Milieu = médiane, moyenne = average.)"},
+
+ {id:"e22c51",type:"s",q:"Normalization is the process of",
+  o:["replacing missing values","removing outliers",
+     "transforming the data from one vector space to another one",
+     "transforming the data to fall within a common range"],
+  c:[3],e:"La normalisation ramène les valeurs dans une plage commune (ex. [0,1] ou moyenne 0 / écart-type 1)."},
+
+ {id:"532c0d",type:"s",q:"What is the role of a loss/error function in machine learning?",
+  o:["No role in the machine learning process",
+     "To measure the error in some senses and to often play as the objective function for training a model",
+     "To measure the loss/error when making future prediction"],
+  c:[1],e:"La fonction de perte mesure l'erreur et sert de fonction objectif à minimiser pendant l'entraînement."},
+
+ {id:"e6aa98",type:"s",q:"What is the wrong statement in the followings?",
+  o:["Model assessment and model selection in machine learning are independent",
+     "Model selection is a must when comparing different machine learning models/methods",
+     "Model assessment often requires model selection as an internal step"],
+  c:[0],e:"Faux : l'évaluation (assessment) et la sélection de modèle ne sont pas indépendantes — l'évaluation intègre souvent la sélection comme étape interne."},
+
+ {id:"b2a230",type:"s",q:"What is the drawback of Hold-out, but can be overcome by stratified sampling for evaluation?",
+  o:["The bad effect of randomness on evaluation results, due to small data size",
+     "The bad effect of the imbalance between classes",
+     "The bad effect of evaluation time"],
+  c:[1],e:"L'échantillonnage stratifié conserve les proportions de classes ⇒ corrige le déséquilibre entre classes que le hold-out aléatoire peut amplifier."},
+
+ {id:"89a2ec",type:"s",q:"Is Hold-out a method for data pre-processing and understanding?",
+  o:["No, it is a strategy for model assessment and selection",
+     "Yes, of course",
+     "No, it is a method for training a model from a given dataset"],
+  c:[0],e:"Le hold-out (partition train/test) est une stratégie d'évaluation et de sélection de modèle, pas du prétraitement."},
+
+ {id:"4f3e62",type:"m",q:"Your work needs to build a classifier that can classify a given email to be spam or normal. However you can only collect a dataset with severe imbalance, that is, 99.9% of the emails are spam. What measure should you use to evaluate the performance of your classifier?",
+  o:["Accuracy","Precision for individual class","Recall for individual class","F1-score for individual class"],
+  c:[1,2,3],e:"Avec un déséquilibre extrême, l'accuracy est trompeuse (99,9% en prédisant toujours « spam »). On utilise précision, rappel et F1 par classe.",
+  note:"Options 3-4 reconstruites (bas de page masqué dans le PDF)."},
+
+ {id:"9f0a3e",type:"s",q:"OLS apprend f(x)=w0+w1x1+…+wnxn en minimisant L. On considère la perte régularisée Lλ = Σ(yi − w0 − w1xi1 − … − wnxin)² + λ‖w‖²₂ (λ ≥ 0). Which statement is WRONG?",
+  o:["λ can preserve the goodness of the solution of OLS",
+     "λ can help to reducing overfitting",
+     "λ plays as the central role on the generalization of f(x)"],
+  c:[0],e:"Faux : ajouter le terme λ‖w‖² biaise (déplace) la solution des moindres carrés ordinaires — cela ne « préserve » pas l'optimalité de la solution OLS. En revanche la régularisation réduit bien le surapprentissage et aide à la généralisation."},
+
+ {id:"a9c1ae",type:"s",q:"What kind of models does f(x)=w0+w1x1+…+wnxn belong to? (w0,…,wn sont les coefficients)",
+  o:["A non-linear model","A non-parametric model","A linear model"],
+  c:[2],e:"f est linéaire par rapport aux paramètres w ⇒ modèle linéaire (et paramétrique)."},
+
+ {id:"f4bde8",type:"s",q:"The least-square linear regression method is applicable only in situations where the estimated regression line has a positive slope/bias.",
+  o:["No","Yes"],
+  c:[0],e:"Faux : la régression par moindres carrés fonctionne pour n'importe quelle pente ou biais (positif, négatif ou nul)."},
+
+ {id:"4193c1",type:"s",q:"What is the relationship between the training set and the test set (in Hold-out)?",
+  o:["They are the same","They are overlapping","It is inappropriate to say that they are overlapping or disjoint","They are disjoint"],
+  c:[3],e:"En hold-out, les ensembles d'entraînement et de test sont disjoints (aucun exemple partagé) pour une évaluation honnête.",
+  note:"Énoncé reconstruit : le texte de la question était masqué dans le PDF, seules les options étaient visibles."},
+
+ {id:"c6c360",type:"m",q:"What can happen when we use an extremely large number of nearest neighbors for prediction in k-NN?",
+  o:["The prediction will be prone to trivial","The prediction will tend to be more accurate","k-NN will tend to get under-fitting","k-NN will tend to get over-fitting"],
+  c:[0,2],e:"Un k très grand ⇒ la prédiction tend vers la classe majoritaire (triviale) et le modèle sous-apprend (frontière trop lisse)."},
+
+ {id:"96339b",type:"s",q:"Which of the following options is true about Nearest Neighbor-based Learning (k-NN) algorithm?",
+  o:["It can be used for both classification and regression","It can be used for regression only","It can be used for classification only"],
+  c:[0],e:"k-NN sert à la fois pour la classification (vote majoritaire) et la régression (moyenne des voisins)."},
+
+ {id:"0a4211",type:"s",q:"Which of the following statements is true for Manhattan distance function?",
+  o:["It can be used for continuous variables","It can be used for nominal variables","It can be used for neither continuous nor nominal variables","It can be used for both continuous and nominal variables"],
+  c:[0],e:"La distance de Manhattan (somme des |différences|) est définie pour des variables numériques/continues. Pour du nominal on utilise plutôt une distance de type Hamming."},
+
+ {id:"eucl",type:"s",q:"Which of the following values is the Euclidean distance between the two data points X(1,7) and Y(4,3)?",
+  o:["3","1","9","7","5"],
+  c:[4],e:"√((4−1)² + (3−7)²) = √(9+16) = √25 = 5. (Vérifié numériquement.)"},
+
+ {id:"bc8473",type:"s",q:"Which of the following statements are true about k-NN? A. In case of very large value of k, it may include data points from other classes into the neighborhood. B. In case of too small value of k, it is very sensitive to noise.",
+  o:["A and B","A","Neither A nor B","B"],
+  c:[0],e:"Les deux sont vraies : k grand ⇒ voisinage « pollué » par d'autres classes ; k petit ⇒ très sensible au bruit."},
+
+ {id:"b9aede",type:"s",q:"Dataset (x1,x2,Class): (-1,1,c2),(0,1,c1),(0,2,c2),(1,-1,c2),(1,0,c1),(1,2,c1),(2,2,c2),(2,3,c1).\nUsing k-NN with Euclidean distance and 7 nearest neighbors, which class does (x1=1, x2=1) belong to?",
+  o:["c2","Undefined","c1"],
+  c:[0],e:"Distances² au point (1,1) : (0,1)=1·c1, (1,0)=1·c1, (1,2)=1·c1, (0,2)=2·c2, (2,2)=2·c2, (-1,1)=4·c2, (1,-1)=4·c2 [7 plus proches], le 8e (2,3)=5 exclu. Décompte : c2=4 vs c1=3 ⇒ c2. (Vérifié numériquement.)"},
+
+ {id:"fc7a08",type:"m",q:"Maximum likelihood estimation can be used to",
+  o:["make inference/prediction for a new example/observation","explore the knowledge in a learned model","estimate the maximum likelihood of a model","learn a model from a given training dataset","infer the correctness of a given model"],
+  c:[0,1,3],e:"Le MLE apprend un modèle (estime ses paramètres) à partir des données ; une fois appris, on peut faire de l'inférence/prédiction et explorer la connaissance du modèle."},
+
+ {id:"265f13",type:"s",q:"Posterior probability may refer to",
+  o:["the knowledge of our model","probability of an observation given a model/hypothesis","probability of a model/hypothesis given observed data"],
+  c:[2],e:"La probabilité a posteriori = P(modèle/hypothèse | données observées). L'option 2 décrit la vraisemblance (likelihood)."},
+
+ {id:"MAPw",type:"m",q:"What are wrong about Maximum A Posteriori (MAP) estimation?",
+  o:["MAP needs not to know any knowledge about the parameters of a model","MAP needs to know some knowledge about the parameters of a model","MAP can estimate the full posterior distribution from a training dataset","MAP can be used to learn a model from a training dataset","MAP can make inference or prediction for new examples"],
+  c:[0,2],e:"Faux : (1) MAP a besoin d'un a priori sur les paramètres ; (3) MAP donne une estimation ponctuelle, pas toute la distribution a posteriori (c'est l'approche bayésienne complète)."},
+
+ {id:"04be97",type:"s",q:"The ID3 decision tree learning algorithm can be used for …",
+  o:["regression","both classification and regression","neither classification nor regression","classification"],
+  c:[3],e:"ID3 construit des arbres de décision pour la classification (attributs catégoriels, gain d'information)."},
+
+ {id:"a23c56",type:"s",q:"Decision tree is … algorithm.",
+  o:["a supervised learning","both a supervised and an unsupervised learning","neither a supervised nor an unsupervised learning","an unsupervised learning"],
+  c:[0],e:"L'arbre de décision est un algorithme supervisé (il apprend à partir d'exemples étiquetés)."},
+
+ {id:"27df10",type:"s",q:"Given a learned decision tree, a test example's class label is determined by … in the tree.",
+  o:["following a single path","following a path with minimum depth"],
+  c:[0],e:"On suit un seul chemin, de la racine à une feuille, en testant les attributs à chaque nœud."},
+
+ {id:"dc8ba6",type:"m",q:"Over-fitting in Decision Tree can be handled by …",
+  o:["Reducing the number of input attributes","Reducing the number of training examples","Stopping the growing of the decision tree earlier","Translating to a set of rules and pruning the rules","Growing a complete tree"],
+  c:[2,3],e:"Deux techniques d'élagage : pré-élagage (arrêter la croissance plus tôt) et post-élagage (convertir en règles puis élaguer). Réduire les exemples ou faire croître un arbre complet aggraverait le surapprentissage."},
+
+ {id:"16ad1d",type:"s",q:"Which of the following are true about decision trees?",
+  o:["They can be used only for regression.","Pruning usually achieves better test accuracy than stopping early.","All data instances in each leaf must have the same class."],
+  c:[1],e:"Le post-élagage (pruning) donne généralement une meilleure précision de test que l'arrêt précoce. Les arbres servent aussi à la classification ; une feuille peut contenir des classes mixtes."},
+
+ {id:"3a5111",type:"m",q:"Which of the following are true of neural networks?",
+  o:["Optimize a linear objective function","Can only be trained with stochastic gradient descent","Can use a mix of different activation functions","Can be made to perform well even when the number of parameters/weights is much greater than the number of data points"],
+  c:[2,3],e:"Un réseau peut mélanger différentes fonctions d'activation, et bien généraliser même sur-paramétré. L'objectif n'est pas linéaire et il existe d'autres optimiseurs que le SGD."},
+
+ {id:"54d929",type:"s",q:"What is activation function?",
+  o:["It computes the output of the neural network","It computes weighted sum of a neuron's input signals","It computes the output of a neuron given its net input","It computes the output of a neuron given its input signals"],
+  c:[2],e:"La fonction d'activation prend l'entrée nette (la somme pondérée déjà calculée) et produit la sortie du neurone. L'option 2 décrit le calcul de la somme pondérée, pas l'activation."},
+
+ {id:"59f1a9",type:"s",q:"A neural network can be seen as a non-linear function. Which is/are that function non-linear in?",
+  o:["Both input signal x and weights","The weights","Input signal x"],
+  c:[0],e:"À cause des activations non linéaires et de la composition des couches, la fonction est non linéaire à la fois en x et en les poids w."},
+
+ {id:"3aa9b4",type:"m",q:"When training a neural network, we are trying to search for …",
+  o:["A function in the function family, which maps from an example to an output","The best weights from the weight space","The hyper-parameter(s) that give best performance","An estimate of the testing error","A configuration of the network architecture"],
+  c:[0,1],e:"L'entraînement cherche les meilleurs poids (⇔ une fonction dans la famille). Hyper-paramètres et architecture sont fixés avant l'entraînement (sélection de modèle)."},
+
+ {id:"kmt",type:"m",q:"Which of the following are true about the K-means algorithm?",
+  o:["always converges to a clustering that minimizes the mean-square vector-representative distance","can converge to different final clustering, depending on initial choice of clusters' centroids","is sensitive to outliers"],
+  c:[1,2],e:"K-means converge vers un optimum LOCAL (pas forcément global), donc le résultat dépend de l'initialisation, et il est sensible aux valeurs aberrantes (moyennes tirées par les outliers).",
+  note:"Énoncé reconstruit (question tronquée dans le PDF)."},
+
+ {id:"ab0712",type:"s",q:"A cluster is",
+  o:["A group of similar objects that differ significantly from other objects in a different group","Symbolic representation of facts or ideas from which information can potentially be extracted","A group of similar or different objects","Operation on a database to transform or simplify data in order to prepare it for a machine learning or data mining algorithm"],
+  c:[0],e:"Un cluster = un groupe d'objets similaires entre eux et nettement différents des objets des autres groupes."},
+
+ {id:"8d15ad",type:"s",q:"Dataset: A=(0;2), B=(0;1), C=(1;0). K-means (Euclidean) initialized with centers at A and B. Upon convergence, the two centers will be at",
+  o:["C and the midpoint of AB","A and B","A and C","A and the midpoint of BC"],
+  c:[3],e:"Itération : C est plus proche de B ⇒ clusters {A} et {B,C}. Nouveaux centres : A=(0,2) et milieu(B,C)=(0.5,0.5). Réaffectation stable ⇒ convergence. Donc A et le milieu de BC. (Vérifié numériquement : centres (0,2) et (0.5,0.5).)"},
+
+ {id:"41dbd9",type:"s",q:"The K-means algorithm …",
+  o:["requires the dimension of the feature space to be no bigger than the number of samples","always finds the global optimum","minimizes the within-cluster variance for a given number of clusters"],
+  c:[2],e:"K-means minimise la variance intra-cluster (inertie) pour un nombre k de clusters fixé. Il ne garantit pas l'optimum global et n'impose aucune contrainte dimension/échantillons.",
+  note:"Distracteurs partiellement reconstruits (options masquées dans le PDF) ; la bonne réponse est bien visible dans la source."},
+
+ {id:"31c916",type:"s",q:"Cluster 7 points into 3 clusters with k-Means (Euclidean). After the first iteration: C1={(0,6),(6,0)}, C2={(2,2),(4,4),(6,6)}, C3={(5,5),(7,7)}. What are the cluster centers?",
+  o:["C1:(3,3), C2:(4,4), C3:(6,6)","C1:(6,6), C2:(12,12), C3:(12,12)","C1:(0,0), C2:(48,48), C3:(35,35)","C1:(3,3), C2:(6,6), C3:(12,12)"],
+  c:[0],e:"Chaque centre = moyenne des points. C1=((0+6)/2,(6+0)/2)=(3,3) ; C2=(12/3,12/3)=(4,4) ; C3=((5+7)/2,(5+7)/2)=(6,6). (Vérifié numériquement.)"},
+
+ {id:"9bc723",type:"m",q:"What does the Apriori algorithm do?",
+  o:["prune rules whose support are lower than minimum support (minsup)","prune rules whose sup are higher than minimum support (minsup)","generate rules whose confidence are lower than minimum confidence (minconf)","generate rules whose confidence are higher than minimum confidence (minconf)"],
+  c:[0,3],e:"Apriori élague les itemsets/règles dont le support < minsup, et ne génère que les règles dont la confiance ≥ minconf."},
+
+ {id:"10315e",type:"s",q:"What does it mean by support count of itemset A?",
+  o:["Total number of transactions not containing A","Number of transactions not containing A / Total number of transactions","Number of transactions containing A / Total number of transactions","Total number of transactions containing A"],
+  c:[3],e:"Le support COUNT = le NOMBRE de transactions contenant A. (L'option 3, un ratio, est le support relatif, pas le count.)"},
+
+ {id:"tronq",type:"s",q:"Consider a set of 6 transactions… (Transaction T1 = {A, B, E}, …)",
+  o:["Question incomplète dans le PDF source"],
+  c:[0],e:"⚠ Cette question est tronquée dans le PDF fourni : seule la première transaction (T1={A,B,E}) et le début du tableau apparaissent, sans énoncé complet ni options. Impossible de la reconstituer fidèlement — fournis-moi la page complète si tu veux que je l'ajoute.",
+  note:"Question incomplète dans la source."}
+ ]
+},
+{
+ title:"QCM 2 — IT3190E (Kíp 2, 02/08/2023)",
+ questions:[
+ {id:"e2b1d2",type:"s",q:"A neural network can be seen as a nonlinear function. That function is nonlinear in …",
+  o:["Both input signal x and weights","Input signal x","The weights"],
+  c:[0],e:"À cause des activations non linéaires et de la composition, la fonction est non linéaire à la fois en x et en les poids."},
+
+ {id:"2cdfc5",type:"s",q:"Which of the following can be the best initial cluster centroids selection for K-means?",
+  o:["Furthest cluster centroids","None of the other options","Closest cluster centroids","Random cluster centroids"],
+  c:[0],e:"Choisir des centroïdes initiaux les plus éloignés possible (idée de k-means++) donne généralement une meilleure initialisation que des centroïdes proches ou purement aléatoires."},
+
+ {id:"b0a09f",type:"s",q:"Data used to optimize the parameter settings of a supervised model is called",
+  o:["Training","Test","Validation"],
+  c:[2],e:"L'ajustement des réglages/hyper-paramètres (« parameter settings ») se fait sur l'ensemble de validation. Le train sert à apprendre les poids, le test à l'évaluation finale."},
+
+ {id:"d3e069",type:"s",q:"In reinforcement learning, a policy is a function that maps … to …",
+  o:["states to actions","states to values","values to actions","actions to states","values to states","actions to values"],
+  c:[0],e:"Une politique π associe à chaque état l'action à prendre : états → actions."},
+
+ {id:"43f9f3",type:"s",q:"A multiple-layer neural network with linear activation functions is equivalent to one single-layer perceptron that uses the same error function on the output layer and has the same number of inputs.",
+  o:["Yes","No"],
+  c:[0],e:"Vrai : composer des transformations linéaires donne encore une transformation linéaire ⇒ un réseau à activations linéaires se réduit à un seul perceptron linéaire."},
+
+ {id:"5ddb52",type:"s",q:"The perceptron algorithm will converge",
+  o:["As long as you initialize weights to all 0's","Always","If the data is linearly separable","Even if the data is linearly inseparable"],
+  c:[2],e:"Le théorème de convergence du perceptron : il converge en un nombre fini d'étapes si (et seulement si) les données sont linéairement séparables."},
+
+ {id:"0adccd",type:"s",q:'The "Analytic approach" step of the product-driven methodology requires us to …',
+  o:["Choose a machine learning method for analyzing our datasets","Transform (or formulate) a real-life problem to be solved into a suitable machine learning problem","Choose a machine learning model to solve our problem","Transform (or formulate) a real-life problem to be solved into an analytic problem"],
+  c:[3],e:"L'étape « Analytic approach » consiste à reformuler le problème réel en un problème analytique (avant même de choisir une méthode ou un modèle ML)."},
+
+ {id:"c3de93",type:"m",q:"Denote L(f,P) the expected loss of classifier f on the whole data space, and L(f,D) the empirical loss of f on the training set D (square loss). What can happen if |L(f,P) − L(f,D)| ≤ 0.01?",
+  o:["f can be overfitting","f can be underfitting","f can generalize well","f will perform extremely well on future data","This case will never happen"],
+  c:[1,2],e:"Un petit écart train/vraie erreur = faible écart de généralisation. Cela est compatible avec un bon modèle (généralise bien) OU un sous-apprentissage (les deux erreurs élevées mais proches). Ce n'est PAS du surapprentissage (grand écart), et ça ne garantit pas d'excellentes performances futures."},
+
+ {id:"95b9b1",type:"m",q:"Which of the followings is not true about advantages of original K-means?",
+  o:["K-means is often efficient and can converge quickly in practice.","Different random initialization of k centroids will lead to the same resulting clusters.","K-means can work with complex cluster shapes, such as non-convex data."],
+  c:[1,2],e:"Fausses (donc « not true ») : (2) l'initialisation aléatoire mène à des résultats DIFFÉRENTS (optimum local) ; (3) K-means suppose des clusters convexes/sphériques et échoue sur les formes non convexes. L'efficacité (1) est bien un vrai avantage."},
+
+ {id:"f610be",type:"s",q:"Suppose you are using a Random Forest in model building. Which of the followings can be TRUE?\n1. Number of trees should be as large as possible\n2. You can easily interpret why Random Forest make a prediction",
+  o:["1","1 and 2","None of the other options","2"],
+  c:[2],e:"(2) est faux : une forêt aléatoire est peu interprétable (modèle « boîte noire »). (1) est une exagération : plus d'arbres a un rendement décroissant et un coût de calcul, on choisit un nombre suffisant, pas « le plus grand possible ». ⇒ Aucune des deux ⇒ None of the other options.",
+  note:"Interprétation discutable : si l'on considère que « plus d'arbres ne nuit jamais » rend l'affirmation 1 vraie, la réponse serait « 1 ». Le choix retenu suit la lecture stricte de l'énoncé."},
+
+ {id:"a4c0ba",type:"s",q:"Which of the following statements are true about linear regression?\nA. Learned by averaging the difference between the regression line and the training examples\nB. Often learned by minimizing the difference between the regression line and the training examples\nC. Can be used for both classification and regression problems\nD. Can be used for only classification problem\nE. Can be used for only regression problem",
+  o:["A, B, C, D and E","A and C","B and C","A and E","B and E","A, B and C"],
+  c:[2],e:"B est vrai (apprentissage par minimisation de l'erreur, moindres carrés). C est vrai au sens « peut être utilisée » : la régression linéaire peut servir à classer via un seuil, donc pas « uniquement régression » (E faux). A (moyenne) et D (uniquement classification) sont faux ⇒ B and C.",
+  note:"Nuance : certains cours considèrent la régression linéaire comme « uniquement régression » (réponse B and E). Ici on retient la lecture « can be used » ⇒ B and C."},
+
+ {id:"a4ddfb",type:"s",q:"GMM: f(x) = (1/10)·N(x|1,1) + (3/10)·N(x|5,3) + (4/10)·N(x|8,2) + (2/10)·N(x|9,1). Which Gaussian component may most likely generate example x = 6?",
+  o:["the component with density N(x|5,3)","the component with density N(x|9,1)","the component with density N(x|1,1)","the component with density N(x|8,2)"],
+  c:[3],e:"On compare les densités PONDÉRÉES en x=6 : comp1≈0, comp2 (5,3)≈0.0377, comp3 (8,2)≈0.0484, comp4 (9,1)≈0.0009. Le maximum est la composante N(x|8,2). (Vérifié numériquement.)"},
+
+ {id:"a4c98e",type:"m",q:"You are using k-NN on a classification problem. The testing accuracy is very low. Which of the followings are likely to improve your model's performance?",
+  o:["Normalizing the attributes of data","Changing other distance measure","Increase K to a very large value","Weighting the attributes of data"],
+  c:[0,1,3],e:"Améliorer k-NN : normaliser les attributs (échelles comparables), changer la mesure de distance, pondérer les attributs pertinents. Augmenter k à une valeur ÉNORME provoque du sous-apprentissage."},
+
+ {id:"403ac0",type:"s",q:"When modeling data, uncertainty can appear in",
+  o:["the collected data","the learned parameter of the chosen model","all the other options","the model family we choose"],
+  c:[2],e:"L'incertitude apparaît dans les données collectées, les paramètres appris ET le choix de la famille de modèles ⇒ toutes les options."},
+
+ {id:"f6c487",type:"s",q:"When training a decision tree by ID3 algorithm, each attribute must be",
+  o:["Continuous","Nominal or categorical","Of any form","Numeric"],
+  c:[1],e:"ID3 ne gère que des attributs nominaux/catégoriels (les attributs continus nécessitent C4.5 ou une discrétisation)."},
+
+ {id:"74ed31",type:"s",q:"Building a decision tree that splits a node on the attribute with the highest information gain (Play-Tennis dataset: Outlook / Temperature / Humidity / Windy). Which attribute has the highest information gain?",
+  o:["Temperature","Humidity","Windy","Outlook"],
+  c:[3],e:"Sur le jeu classique « Play Tennis », Outlook a le gain d'information le plus élevé (≈0.247) et devient la racine de l'arbre."},
+
+ {id:"5ca820",type:"m",q:"The complexity of each SVM training iteration depends on …",
+  o:["The size of the dataset","The number of attributes","The number of support vectors","The penalty constant C"],
+  c:[0,1],e:"Chaque itération d'entraînement (ex. SMO) parcourt les données (taille du dataset) et calcule des produits scalaires/noyaux (nombre d'attributs). Le nombre de vecteurs de support concerne surtout la prédiction, pas le coût par itération d'entraînement.",
+  note:"Réponse selon la lecture « coût par itération ». Certaines variantes du cours cochent aussi C — à confirmer avec ton support de cours."},
+
+ {id:"7a4628",type:"s",q:"Ensemble Learning can only be applied to supervised learning methods.",
+  o:["True","False"],
+  c:[1],e:"Faux : les méthodes d'ensemble s'appliquent aussi au non-supervisé (ex. clustering ensembles / consensus clustering)."},
+
+ {id:"396af2",type:"s",q:"Which of the following are advantages of stacking (in Ensemble Learning)?\n1. Better prediction.  2. More robust model.  3. Lower time of training and prediction.",
+  o:["1 and 3","1 and 2","1, 2 and 3","2 and 3"],
+  c:[1],e:"Le stacking améliore la prédiction (1) et la robustesse (2), mais il est plus COÛTEUX (entraîne plusieurs modèles + un méta-modèle), donc (3) est faux ⇒ 1 and 2."},
+
+ {id:"f1680a",type:"s",q:"Reinforcement learning, non-deterministic world. Select the equation that correctly relates Q to value function vπ.",
+  o:["Q(s,a) = Σ P(s',r|a,s)·[ r + γ·vπ(s') ]","Q(s,a) = Σ P(s',r|a,s)·[ r + vπ(s') ]","Q(s,a) = Σ P(s',r|a,s)·γ·[ r + vπ(s') ]"],
+  c:[0],e:"Équation de Bellman correcte : Q(s,a) = Σ P(s',r|s,a)·[ r + γ·vπ(s') ] — le facteur d'actualisation γ ne s'applique qu'à la valeur future, pas à la récompense immédiate r."},
+
+ {id:"88c13c",type:"s",q:"Which is INCORRECT in the following statements?",
+  o:["Stratified sampling is suitable for small datasets.","Hold-out is suitable for large datasets.","Cross validation is suitable for small/average datasets.","Bootstrap sampling is suitable for small datasets."],
+  c:[0],e:"L'échantillonnage stratifié concerne le maintien des proportions de classes (données déséquilibrées), pas la « petite taille ». Hold-out (grands jeux), validation croisée (petits/moyens) et bootstrap (petits) sont, eux, corrects."},
+
+ {id:"2c8c6a",type:"m",q:"What are WRONG about Maximum A Posteriori estimation (MAP)?",
+  o:["MAP needs not to know any knowledge about the parameters of a model","MAP needs to know some knowledge about the parameters of a model","MAP can estimate the full posterior distribution from a training dataset","MAP can be used to learn a model from a training dataset","MAP can make inference or prediction for new examples"],
+  c:[0,2],e:"Faux : (1) MAP requiert un a priori sur les paramètres ; (3) MAP fournit une estimation ponctuelle, pas toute la distribution a posteriori."},
+
+ {id:"4ba6a7",type:"s",q:"In reinforcement learning, what is the reward hypothesis?",
+  o:["Goals and purposes can be thought of as the maximization of the expected value of the cumulative sum of rewards received.","Always take the action that gives you the best reward at that point.","Ignore rewards and find other signals."],
+  c:[0],e:"L'hypothèse de récompense (Sutton & Barto) : tout objectif peut se formuler comme la maximisation de l'espérance de la somme cumulée des récompenses."},
+
+ {id:"91f7f0",type:"m",q:"Training a neural network with sigmoid activations, you suffer from vanishing gradients (gradients ≈ 0, training very slow). How could you combat this problem?",
+  o:["Make the network shallower (fewer layers).","Use ReLU activations instead of sigmoids.","Initialize the weights with larger values.","Make the network deeper (more layers)."],
+  c:[0,1],e:"Un réseau moins profond réduit le nombre de multiplications de gradients (< 1), et ReLU ne sature pas côté positif (dérivée = 1) ⇒ atténue le gradient qui s'évanouit. Des poids plus grands ou un réseau plus profond aggravent le problème."},
+
+ {id:"461850",type:"s",q:"Which of the following statements is true about the k-NN algorithm?",
+  o:["In case the number of the numerical attributes is small, it performs better if they have the same scale.","For any number of the numerical attributes, it may perform better if they have the same scale.","In case the number of the numerical attributes is large, it performs better if they have the same scale."],
+  c:[1],e:"k-NN dépend des distances : mettre les attributs à la même échelle aide QUEL QUE SOIT leur nombre (pour éviter qu'un attribut à grande amplitude domine)."},
+
+ {id:"422862",type:"s",q:"Random Forest with K trees for regression. Each tree i represents a function Ti(x). Which function does the Random Forest represent?",
+  o:["y(x) = Σ Ti(x) / K","y(x) = Σ Ti(x/K)","y(x) = maxᵢ Ti(x)","y(x) = Σ Ti(x)"],
+  c:[0],e:"En régression, la forêt aléatoire fait la MOYENNE des prédictions des K arbres : y(x) = (1/K)·Σ Ti(x)."},
+
+ {id:"bd4b6d",type:"m",q:"We want to train a linear model f(x)=w0+w1x1+…+wnxn from a training set of size M. In the case of M ≪ n, what can happen with the LASSO method?",
+  o:["There may be no unique solution","There is a unique solution","We cannot find any solution","There is no solution"],
+  c:[0,1],e:"Avec M ≪ n (plus de variables que d'exemples), LASSO admet toujours au moins une solution : selon les données elle peut être unique (sparsité en position générale) ou non unique. Donc (1) et (2) sont des cas possibles ; « aucune solution » est faux.",
+  note:"Si le cours attend la réponse-clé du cas M≪n, c'est surtout « There may be no unique solution »."},
+
+ {id:"647e03",type:"s",q:"Binary classification, 3 models: M1=70%, M2=60%, M3=50% accuracy. Ensembling them by majority voting, what is the maximum accuracy you can get?",
+  o:["70%","100%","60%","50%"],
+  c:[1],e:"Dans le meilleur des cas, les erreurs des modèles se répartissent sur des exemples différents ; le vote majoritaire peut alors être correct partout ⇒ jusqu'à 100%."},
+
+ {id:"356ab0",type:"m",q:"You train a classifier on 10,000 points, get 99% training accuracy, but only 67% on Kaggle (overfitting). Which has a good chance of improving your Kaggle performance?",
+  o:["Set your regularization coefficient (if any) to 0","Train on more data","Use a validation set to tune your hyperparameters","Remove randomly some parts of the training set when training your classifier"],
+  c:[1,2],e:"Contre le surapprentissage : plus de données d'entraînement et régler les hyper-paramètres via validation. Mettre la régularisation à 0 ou retirer des données au hasard aggraveraient le problème."},
+
+ {id:"16597",type:"s",q:"In k-nearest neighbor method, a good initialization may improve much the overall performance.",
+  o:["No, it's wrong","Yes, of course","Yes, with some suitable choices of similarity measure","Yes, in some situations"],
+  c:[0],e:"k-NN est un apprenant paresseux : il n'a PAS de phase d'initialisation/entraînement (pas de poids à initialiser). L'affirmation sur « l'initialisation » est donc fausse.",
+  note:"Le choix de la mesure de similarité influence bien k-NN, mais la question porte sur « l'initialisation », qui n'existe pas pour k-NN ⇒ « No, it's wrong »."},
+
+ {id:"d189",type:"m",q:"What are WRONG when training a linear SVM from a training set of size m?",
+  o:["The number of support vectors may depend on m","The number of support vectors is independent of m","There may be no support vector","The number of support vectors is dependent of the choice of the penalty constant C.","The trained classifier may make wrong predictions for all of the training set."],
+  c:[1,2,4],e:"Fausses : (2) le nombre de SV peut varier avec m ; (3) un SVM a toujours au moins un vecteur de support ; (5) le SVM ajuste les données, il ne se trompe pas sur TOUT le train. Vraies : (1) et (4)."},
+
+ {id:"b82",type:"s",q:"Unlabeled dataset {x1,…,xN}. You run K-means with 50 different random initializations (same k) and get 50 clusterings. Recommended way to choose the good clustering?",
+  o:["Always pick the final (50th) clustering, since by that time it is more likely to have converged","Choose the clustering with smallest (1/N)·Σ‖xi − m_i‖², where m_i is the mean of the cluster containing xi","The only way to do so is if we also have labels yi for our data"],
+  c:[1],e:"On garde le clustering qui minimise l'inertie intra-cluster (distorsion) Σ‖xi − m_i‖². L'ordre d'exécution n'a pas de sens, et aucune étiquette n'est nécessaire."},
+
+ {id:"b7",type:"s",q:"Linear model f(x)=w0+w1x from D={(1,−2),(1,−0.1),(3,1.6),(−2.5,−2),(4.5,0.1),(5,3.3)}. After OLS, which is correct for w0 and w1?",
+  o:["w0∈[0.4,0.6] and w1∈[0.6,0.7]","w0∈[−0.7,−0.5] and w1∈[0.6,0.8]","w0∈[3,4.5] and w1∈[1,2]","w0∈[−1,0] and w1∈[1,2]","w0∈[−1.2,−0.8] and w1∈[0.3,0.6]"],
+  c:[4],e:"Moindres carrés : w1 = Cov(x,y)/Var(x) ≈ 0.59 et w0 = ȳ − w1·x̄ ≈ −1.04. Donc w0∈[−1.2,−0.8] et w1∈[0.3,0.6]. (Vérifié numériquement : w0=−1.037, w1=0.594.)"},
+
+ {id:"cv3",type:"m",q:"Which of the followings are TRUE about cross validation?",
+  o:["Is guaranteed to prevent overfitting","Is often used to select hyperparameters","Is often used to compare the performances of methods"],
+  c:[1,2],e:"La validation croisée sert à sélectionner les hyper-paramètres et à comparer des méthodes. Elle ne GARANTIT pas l'absence de surapprentissage (elle l'estime, ne l'empêche pas)."},
+
+ {id:"88ba31",type:"m",q:"What can happen when we use nonlinear SVM?",
+  o:["Nothing","A nonlinear SVM will be trained in a new feature space","We are working in a space which is different from the input space","A nonlinear classifier is used"],
+  c:[1,2,3],e:"Un SVM non linéaire utilise un noyau : il s'entraîne (linéairement) dans un nouvel espace de caractéristiques, donc différent de l'espace d'entrée, ce qui donne un classifieur non linéaire dans l'espace d'origine."}
+ ]
+}
+];
+
+/* ============ LOGIQUE UI ============ */
+let curQuiz=0, curIdx=0;
+const state={}; // state[qi][idx] : {answers:Set, checked:bool, correct:bool}
+
+QUIZZES.forEach((q,qi)=>{ state[qi]={}; q.questions.forEach((_,i)=>state[qi][i]={answers:new Set(),checked:false,correct:false}); });
+document.getElementById('c0').textContent=`Final Exam (04/08/2023) — ${QUIZZES[0].questions.length} questions`;
+document.getElementById('c1').textContent=`Kíp 2 (02/08/2023) — ${QUIZZES[1].questions.length} questions`;
+
+function startQuiz(qi){ curQuiz=qi; curIdx=0;
+  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  document.getElementById('quizTitle').textContent=QUIZZES[qi].title;
+  render();
+}
+function backToMenu(){
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('menu').classList.remove('hidden');
+}
+function buildPalette(){
+  const p=document.getElementById('palette'); p.innerHTML='';
+  QUIZZES[curQuiz].questions.forEach((_,i)=>{
+    const b=document.createElement('button'); b.textContent=i+1;
+    const s=state[curQuiz][i];
+    if(i===curIdx) b.classList.add('cur');
+    else if(s.checked) b.classList.add(s.correct?'done':'wrong');
+    b.onclick=()=>{curIdx=i;render();};
+    p.appendChild(b);
+  });
+}
+function arraysEqual(setA,arrB){
+  if(setA.size!==arrB.length) return false;
+  return arrB.every(x=>setA.has(x));
+}
+function render(){
+  const quiz=QUIZZES[curQuiz], q=quiz.questions[curIdx], s=state[curQuiz][curIdx];
+  document.getElementById('progress').textContent=`Question ${curIdx+1} / ${quiz.questions.length}`;
+  buildPalette();
+  const card=document.getElementById('card');
+  const multi=q.type==='m';
+  let html=`<div class="qmeta">Question #${q.id} · ${multi?'Plusieurs réponses possibles ☐':'Une seule réponse ◯'}</div>`;
+  html+=`<div class="qtext">${escapeHtml(q.q)}</div>`;
+  if(q.note) html+=`<div class="hint">⚠ ${escapeHtml(q.note)}</div>`;
+  html+=`<div class="opts" id="opts">`;
+  q.o.forEach((opt,idx)=>{
+    const checked=s.answers.has(idx)?'checked':'';
+    let cls='opt';
+    if(s.checked){
+      const isCorrect=q.c.includes(idx);
+      const isChosen=s.answers.has(idx);
+      if(isCorrect) cls+=' correct';
+      else if(isChosen) cls+=' incorrect';
+    }
+    let tag='';
+    if(s.checked){
+      if(q.c.includes(idx)) tag='<span class="tag ok">Bonne réponse</span>';
+      else if(s.answers.has(idx)) tag='<span class="tag bad">Ton choix</span>';
+    }
+    html+=`<label class="${cls}">
+      <input type="${multi?'checkbox':'radio'}" name="opt" value="${idx}" ${checked} ${s.checked?'disabled':''} onchange="pick(${idx},${multi})">
+      <span>${escapeHtml(opt)}</span>${tag}</label>`;
+  });
+  html+=`</div>`;
+  html+=`<div class="actions">
+    <button class="btn primary" onclick="check()" ${s.checked?'disabled':''}>Vérifier</button>
+    <button class="btn" onclick="reset()">Réessayer</button>
+  </div>`;
+  html+=`<div class="result ${s.checked?(s.correct?'good show':'no show'):''}" id="result">`;
+  if(s.checked){
+    html+=`<b>${s.correct?'✅ Correct !':'❌ Incorrect'}</b>`;
+    const good=q.c.map(i=>q.o[i]).join(' · ');
+    html+=`<div class="exp"><b style="display:inline">Réponse${q.c.length>1?'s':''} :</b> ${escapeHtml(good)}</div>`;
+    html+=`<div class="exp">${escapeHtml(q.e)}</div>`;
+  }
+  html+=`</div>`;
+  card.innerHTML=html;
+  document.getElementById('prev').disabled=curIdx===0;
+  document.getElementById('next').disabled=curIdx===quiz.questions.length-1;
+}
+function pick(idx,multi){
+  const s=state[curQuiz][curIdx];
+  if(multi){ if(s.answers.has(idx)) s.answers.delete(idx); else s.answers.add(idx); }
+  else { s.answers.clear(); s.answers.add(idx); }
+}
+function check(){
+  const q=QUIZZES[curQuiz].questions[curIdx], s=state[curQuiz][curIdx];
+  if(s.answers.size===0){ alert('Coche au moins une réponse.'); return; }
+  s.checked=true;
+  s.correct=arraysEqual(s.answers,q.c);
+  render();
+}
+function reset(){
+  const s=state[curQuiz][curIdx];
+  s.answers=new Set(); s.checked=false; s.correct=false;
+  render();
+}
+function go(d){ const n=curIdx+d; if(n>=0&&n<QUIZZES[curQuiz].questions.length){curIdx=n;render();} }
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+</script>
+</body>
+</html>
